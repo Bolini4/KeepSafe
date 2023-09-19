@@ -1,5 +1,6 @@
 {
     "utilisateur": "bolini",
+    "mot_de_passe": "passwordBolini",
     "sites": [
       {
         "nom": "Site Web 1",
