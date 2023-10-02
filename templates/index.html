@@ -6,18 +6,19 @@
     <title>Gestionnaire de Mots de Passe</title>
 </head>
 <body>
-    <h1>Bienvenue dans le Gestionnaire de Mots de Passe</h1>
-    <p>Choisissez une option :</p>
-    <ul>
-        <li><a href="/ouvrir">Ouvrir un Coffre-fort Existant</a></li>
-        <li><a href="/creer">Créer un Nouveau Coffre-fort</a></li>
-        <li><a href="/passwordGen">Générer un mdp</a></li>
-    </ul>
+    <h1>Gestionnaire de Mots de Passe</h1>
+    <h2>Créer un nouveau coffre</h2>
+    <form action="/creer" method="post">
+        <label for="nom">Nom du coffre</label>
+        <input type="text" name="nom" id="nom">
+        <input type="submit" value="Créer">
+    </form>
     <h1>Liste des coffres</h1>
     <ul>
-        {%for fichier in json_files%}
-            <li><a href="/ouvrir/{{fichier}}">{{fichier}}</a></li>
-        {%endfor%}
+        {% for fichier in json_files %}
+            {% set nom_sans_extension = fichier.split('.')[0] %}
+            <li><a href="/ouvrir/{{ nom_sans_extension }}">{{ nom_sans_extension }}</a></li>
+        {% endfor %}
     </ul>
 </body>
 </html>
