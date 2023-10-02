@@ -13,5 +13,11 @@
         <li><a href="/creer">Créer un Nouveau Coffre-fort</a></li>
         <li><a href="/passwordGen">Générer un mdp</a></li>
     </ul>
+    <h1>Liste des coffres</h1>
+    <ul>
+        {%for fichier in json_files%}
+            <li><a href="/ouvrir/{{fichier}}">{{fichier}}</a></li>
+        {%endfor%}
+    </ul>
 </body>
 </html>

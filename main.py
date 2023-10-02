@@ -1,6 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for
+import os
+import json
 
 app = Flask(__name__)
+
+def list_json_files():
+    json_files = []
+
+    try:
+        for file in os.listdir("coffres"):
+            if file.endswith(".json"):
+                json_files.append(file)
+    except:
+        pass
+    return json_files
 
 coffre_fort = {
     "utilisateur": "bolini",
@@ -9,7 +22,8 @@ coffre_fort = {
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    list_json_files()
+    return render_template("index.html", json_files=list_json_files() )
 
 @app.route("/passwordGen")
 def passwordGen():
