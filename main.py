@@ -1,10 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, session,redirect, url_for
+from flask_session import Session
 import os
 import json
 from hashlib import sha256
 import hash_functions
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 
 def generate_first_json(filename):
         coffre = filename
@@ -83,10 +88,30 @@ def ouvrir_coffre_fort(nom_fichier):
 
 @app.route('/show/<nom_fichier>', methods=['POST'])
 def show_coffre_fort(nom_fichier):
+
     password = request.form.get('password')
+
     key = hash_functions.generate_key(password, load_existing_salt=True)
-    hash_functions.decrypt("coffres/" + nom_fichier + ".json", key) 
+    hash_functions.decrypt("coffres/" + nom_fichier + ".json", key)
+
     with open("coffres/"+ nom_fichier + ".json", 'r') as file:
         data = json.load(file)
+
     print(password)
+    session['password'] = password
+    session['nom_fichier'] = nom_fichier+".json"
+
     return render_template("show.html", data=data)
+
+@app.route("/lock")
+def lock_coffre_fort():
+    
+    password_session = session['password']
+    file = session['nom_fichier']
+
+    key = hash_functions.generate_key(password_session)
+    hash_functions.encrypt("coffres/" + file, key)
+    session.pop('password', None)
+    session.pop('nom_fichier', None)
+
+    return redirect(url_for('index'))
