@@ -11,32 +11,42 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
+def check_json_exists(filename):
+    # Vérifiez d'abord si le fichier existe
+    if os.path.isfile("coffres/" + filename + ".json"):
+        # Le fichier existe déjà, vous pouvez choisir de gérer cette situation ici
+        print(f"Le fichier {filename}.json existe déjà.")
+        return 1
+    else:
+        return 0
+    
+
 def generate_first_json(filename):
-        coffre = filename
-        sites = [
-            {
-                "nom": "Site Web 1",
-                "login": "nom_utilisateur_site1",
-                "mot_de_passe": "mot_de_passe_site1"
-            },
-            {
-                "nom": "Site Web 2",
-                "login": "nom_utilisateur_site2",
-                "mot_de_passe": "mot_de_passe_site2"
-            },
-            {
-                "nom": "Site Web 3",
-                "login": "nom_utilisateur_site3",
-                "mot_de_passe": "mot_de_passe_site3"
-            }
-        ]
-        donnees = {
-        "utilisateur": coffre,
-        "sites": sites
+    coffre = filename
+    sites = [
+        {
+            "nom": "Site Web 1",
+            "login": "nom_utilisateur_site1",
+            "mot_de_passe": "mot_de_passe_site1"
+        },
+        {
+            "nom": "Site Web 2",
+            "login": "nom_utilisateur_site2",
+            "mot_de_passe": "mot_de_passe_site2"
+        },
+        {
+            "nom": "Site Web 3",
+            "login": "nom_utilisateur_site3",
+            "mot_de_passe": "mot_de_passe_site3"
         }
-        with open("coffres/" + filename + ".json", "w") as f:
-            # Utilisez json.dump pour écrire les données dans le fichier
-            json.dump(donnees, f, indent=2)  # indent=2 pour une indentation lisibl
+    ]
+    donnees = {
+    "utilisateur": coffre,
+    "sites": sites
+    }
+    with open("coffres/" + filename + ".json", "w") as f:
+        # Utilisez json.dump pour écrire les données dans le fichier
+        json.dump(donnees, f, indent=2)  # indent=2 pour une indentation lisibl
 
 def list_json_files():
     json_files = []
@@ -63,10 +73,11 @@ def passwordGen():
 def creer_coffre_fort():
     # Récupérez la valeur soumise pour le champ 'nom' du formulaire
     nom_du_coffre = request.form.get('nom')
-
-    # Faites quelque chose avec la valeur, par exemple, l'enregistrer dans un fichier JSON
-    # ou dans une base de données
-    return render_template("creer.html", nom_du_coffre=nom_du_coffre)
+    exists = check_json_exists(nom_du_coffre)
+    if exists == 1:
+        return render_template("alreadyexists.html")
+    elif exists == 0:
+        return render_template("creer.html", nom_du_coffre=nom_du_coffre)
 
 
 @app.route('/finaliser', methods=['POST'])
