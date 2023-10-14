@@ -99,15 +99,16 @@ def show_coffre_fort(nom_fichier):
     key = hash_functions.generate_key(password, load_existing_salt=True)
     print("key used : "+str(key))
     status = hash_functions.decrypt("coffres/" + nom_fichier + ".json", key)
+    if status == 1:
+        with open("coffres/"+ nom_fichier + ".json", 'r') as file:
+            data = json.load(file)
+        print(password)
+        session['password'] = password
+        session['nom_fichier'] = nom_fichier+".json"
 
-    with open("coffres/"+ nom_fichier + ".json", 'r') as file:
-        data = json.load(file)
-
-    print(password)
-    session['password'] = password
-    session['nom_fichier'] = nom_fichier+".json"
-
-    return render_template("show.html", data=data)
+        return render_template("show.html", data=data)
+    elif status == 0:
+        return render_template("wrongpass.html")
 
 @app.route("/lock")
 def lock_coffre_fort():
