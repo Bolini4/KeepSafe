@@ -19,7 +19,7 @@ def load_salt():
     # load salt from salt.salt file
     return open("salt.salt", "rb").read()
 
-def generate_key(password, salt_size=16, load_existing_salt=False, save_salt=True):
+def generate_key(password, salt_size=16, load_existing_salt=True, save_salt=True):
     if load_existing_salt:
         # load existing salt
         salt = load_salt()
@@ -31,6 +31,7 @@ def generate_key(password, salt_size=16, load_existing_salt=False, save_salt=Tru
     # generate the key from the salt and the password
     derived_key = derive_key(salt, password)
     # encode it using Base 64 and return it
+    print("derived_key : "+str(derived_key))
     return base64.urlsafe_b64encode(derived_key)
 
 def encrypt(filename, key):
@@ -60,11 +61,12 @@ def decrypt(filename, key):
         decrypted_data = f.decrypt(encrypted_data)
     except cryptography.fernet.InvalidToken:
         print("Invalid token, most likely the password is incorrect")
-        return
+        return 0
     # write the original file
     with open(filename, "wb") as file:
         file.write(decrypted_data)
     print("File decrypted successfully")
+    return 1
     
 
 

@@ -74,11 +74,16 @@ def finaliser_CF():
     # Récupérez la valeur soumise pour le champ 'nom' du formulaire
     name = request.form.get('nom')
     password = request.form.get('password')
+    print("this is name : "+name)
     print(password)
 
     generate_first_json(name)
+
     key = hash_functions.generate_key(password)
+    print("key generateed : "+str(key))
+
     hash_functions.encrypt("coffres/" + name + ".json", key)
+
     return render_template("finaliser.html", name=name, password=password)
 
 @app.route('/ouvrir/<nom_fichier>')
@@ -92,7 +97,8 @@ def show_coffre_fort(nom_fichier):
     password = request.form.get('password')
 
     key = hash_functions.generate_key(password, load_existing_salt=True)
-    hash_functions.decrypt("coffres/" + nom_fichier + ".json", key)
+    print("key used : "+str(key))
+    status = hash_functions.decrypt("coffres/" + nom_fichier + ".json", key)
 
     with open("coffres/"+ nom_fichier + ".json", 'r') as file:
         data = json.load(file)

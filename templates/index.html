@@ -16,7 +16,7 @@
     <h1>Liste des coffres</h1>
     <ul>
         {% for fichier in json_files %}
-            {% set nom_sans_extension = fichier.split('.')[0] %}
+            {% set nom_sans_extension = fichier.split('.json')[0] %}
             <li><a href="/ouvrir/{{ nom_sans_extension }}">{{ nom_sans_extension }}</a></li>
         {% endfor %}
     </ul>
