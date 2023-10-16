@@ -226,6 +226,33 @@ def delete_site(index):
     except IndexError:
         return jsonify({'success': False, 'message': 'Index de l\'élément à supprimer non valide.'})
     
+@app.route('/add', methods=['GET', 'POST'])
+def add_site():
+    file_json = session['nom_fichier']
+    password_session = session['password']
+    file = file_json.split('.json')[0]
+
+    nom = request.form.get('nom')
+    login = request.form.get('login')
+    mot_de_passe = request.form.get('mot_de_passe')
+
+    with open("coffres/"+ file+".json", 'r') as f:
+        data = json.load(f)
+
+    new_entry = {
+        'nom': nom,
+        'login': login,
+        'mot_de_passe': mot_de_passe
+    }
+
+    data['sites'].append(new_entry)
+
+    os.remove("coffres/"+ file+".json")
+    create_json(file,data)
+
+    key = hash_functions.generate_key(password_session)
+    hash_functions.encrypt("coffres/" + file_json, key)
+    return render_template('delete.html', index=index, data=data)
 
 
 password_descriptions = {
