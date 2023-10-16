@@ -158,11 +158,9 @@ def lock_coffre_fort():
 
 @app.route('/show/edit', methods=['GET', 'POST'])
 def edit_site():
-    print("coucouEdit")
     file_json = session['nom_fichier']
     password_session = session['password']
     file = file_json.split('.json')[0]
-    print(file)
     # Chargez les données du fichier JSON dès le début de la fonction
     with open("coffres/"+ file+".json", 'r') as f:
         data = json.load(f)
@@ -181,8 +179,7 @@ def edit_site():
                 'mot_de_passe': mot_de_passe
                 # Ajoutez d'autres champs si nécessaire
             }
-            print(data['sites'][index])
-            print(data)
+
             os.remove("coffres/"+ file+".json")
             create_json(file,data)
 
@@ -197,6 +194,39 @@ def edit_site():
         site = data['sites'][int(index)]
         
         return render_template('dashboard.html', data=data, site=site, index=index)
+
+
+@app.route('/delete')
+def delete_site_form():
+    return render_template('delete.html')
+
+
+@app.route('/show/delete/<int:index>', methods=['DELETE'])
+def delete_site(index):
+
+    file_json = session['nom_fichier']
+    password_session = session['password']
+    file = file_json.split('.json')[0]
+    # Charger les données du fichier JSON
+    with open("coffres/"+ file+".json", 'r') as f:
+        data = json.load(f)
+
+    try:
+        # Supprimer l'élément à l'index spécifié
+        deleted_site = data['sites'].pop(index - 1)
+
+        os.remove("coffres/"+ file+".json")
+        create_json(file,data)
+
+        key = hash_functions.generate_key(password_session)
+        hash_functions.encrypt("coffres/" + file_json, key)
+        print("direction delete")
+
+        return render_template('delete.html', deleted_site=deleted_site, index=index, data=data)
+    except IndexError:
+        return jsonify({'success': False, 'message': 'Index de l\'élément à supprimer non valide.'})
+    
+
 
 password_descriptions = {
     1: "Très faible",

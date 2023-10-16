@@ -62,7 +62,7 @@
                 <td style="color: {{ site['strength']['color'] }}">{{ site['strength']['description'] }}/5</td>
                 <td>{{ "OUI" if site['leaked_online'] else "NON" }}</td>
                 <td>
-                    <button class="delete-button" data-index="{{ loop.index }}">Supprimer</button>
+                  <form action="/delete">  <button class="delete-button" data-index="{{ loop.index }}">Supprimer</button></form>
                 </td>
                 <td>
                     <button class="edit-button" data-index="{{ loop.index0 }}">Modifier</button>
@@ -123,6 +123,7 @@
     <input type="submit" value="Ajouter">
 </form>
 <script>
+     
 
     function generateRandomPassword() {
         const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+|}{[]:;?><,./-=";
@@ -138,7 +139,7 @@
     deleteButtons.forEach(button => {
         button.addEventListener('click', () => {
             const index = button.getAttribute('data-index');
-            fetch(`/dashboard/delete/${index}`, {
+            fetch(`/show/delete/${index}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -154,7 +155,7 @@
                 }
             })
             .catch(error => {
-                console.error('Erreur : ma bite', error);
+                console.error('Erreur :', error);
             });
         });
 
