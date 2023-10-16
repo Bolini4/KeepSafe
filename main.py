@@ -34,11 +34,6 @@ def generate_first_json(filename):
             "login": "nom_utilisateur_site2",
             "mot_de_passe": "mot_de_passe_site2"
         },
-        {
-            "nom": "Site Web 3",
-            "login": "nom_utilisateur_site3",
-            "mot_de_passe": "mot_de_passe_site3"
-        }
     ]
     donnees = {
     "utilisateur": coffre,
@@ -64,9 +59,6 @@ def index():
     list_json_files()
     return render_template("index.html", json_files=list_json_files() )
 
-@app.route("/passwordGen")
-def passwordGen():
-    return render_template("passge.html")
 
 
 @app.route('/creer', methods=['POST'])
@@ -108,12 +100,12 @@ def show_coffre_fort(nom_fichier):
     password = request.form.get('password')
 
     key = hash_functions.generate_key(password, load_existing_salt=True)
-    print("key used : "+str(key))
+
     status = hash_functions.decrypt("coffres/" + nom_fichier + ".json", key)
     if status == 1:
         with open("coffres/"+ nom_fichier + ".json", 'r') as file:
             data = json.load(file)
-        print(password)
+
         session['password'] = password
         session['nom_fichier'] = nom_fichier+".json"
 
